@@ -15,6 +15,7 @@ class VideoActions(BaseMethods):
     __private_div_jw_player=(By.XPATH, "//div[@class='jw-reset jw-old-rail']")
     __private_button_play=(By.CSS_SELECTOR, "div[class='jw-icon jw-icon-inline jw-button-color jw-reset jw-icon-playback']")
     __private_button_sound=(By.CSS_SELECTOR, "div[role='group']")
+    __private_slider=(By.XPATH, "(//div[@class='jw-slider-container jw-reset'])[2]")
     __private_sound_knob=(By.XPATH, "(//div[@class='jw-knob jw-reset'])[2]")
     __private_button_setting=(By.CSS_SELECTOR, "svg[class='jw-svg-icon jw-svg-icon-settings']")
     __private_button_480p=(By.CSS_SELECTOR, "button[aria-label='480p']")
@@ -43,12 +44,17 @@ class VideoActions(BaseMethods):
             Method created for to hover on sound button to see the silder and
             then move it so to make souf 50%
         """
+        # calculation of the slider to make 50& volume
+        slider=self.find_element_wait_presence(self.__private_slider)
+        slider_lenght = slider.size['height']
+        movement = int(slider_lenght*((100 - 50) / 100.0))
+        
         actions = ActionChains(self.driver)
         actions.move_to_element(self.find_element_wait_presence(self.__private_div_jw_player)).perform()
         actions.move_to_element(self.find_element_wait(self.__private_button_sound)).perform()
         log.info("Hovering on the sound button")
         time.sleep(2)
-        actions.move_to_element(self.find_element_wait(self.__private_sound_knob)).click_and_hold().move_by_offset(50,0).release().perform()
+        actions.move_to_element(self.find_element_wait(self.__private_sound_knob)).click_and_hold().move_by_offset(0,movement).release().perform()
         log.info("Adjested the sound percentage to 50%")
 
     def click_settings_button(self):
